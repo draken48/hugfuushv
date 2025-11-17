@@ -1,8 +1,11 @@
-import PlaceholderComponent from './components/PlaceholderComponent';
+
 import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from './config/firebase';
-import { Wallet, TrendingUp, Target, Award, MessageSquare, Settings as SettingsIcon, Plus, Moon, Sun, Zap, AlertCircle, Rocket, ThumbsDown, Leaf, Clock, Gift, CreditCard, LogOut } from 'lucide-react';
+import {
+  Wallet, TrendingUp, Target, Award, MessageSquare, Settings as SettingsIcon, Plus,
+  Moon, Sun, Zap, AlertCircle, Rocket, ThumbsDown, Leaf, Clock, Gift, CreditCard, LogOut
+} from 'lucide-react';
 
 import AnimatedLogin from './components/AnimatedLogin';
 import Dashboard from './components/Dashboard';
@@ -33,7 +36,7 @@ const CATEGORIES = [
   { name: 'Bills & Utilities', color: '#9966FF', icon: '💡' },
   { name: 'Healthcare', color: '#FF9F40', icon: '🏥' },
   { name: 'Education', color: '#FF6384', icon: '📚' },
-  { name: 'Others', color: '#C9CBCF', icon: '📦'  },
+  { name: 'Others', color: '#C9CBCF', icon: '📦' }
 ];
 
 const CURRENCY_SYMBOLS = {
@@ -100,30 +103,30 @@ function App() {
         })));
       } else {
         const sampleExpenses = [
-          { 
-            amount: 45.50, 
-            category: 'Food & Dining', 
-            description: 'Lunch at cafe', 
-            date: new Date().toISOString().split('T')[0], 
-            tags: ['lunch'], 
+          {
+            amount: 45.50,
+            category: 'Food & Dining',
+            description: 'Lunch at cafe',
+            date: new Date().toISOString().split('T')[0],
+            tags: ['lunch'],
             mood: 'happy',
             recurring: false
           },
-          { 
-            amount: 120, 
-            category: 'Shopping', 
-            description: 'New shoes', 
-            date: new Date(Date.now() - 86400000).toISOString().split('T')[0], 
-            tags: ['clothing'], 
+          {
+            amount: 120,
+            category: 'Shopping',
+            description: 'New shoes',
+            date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+            tags: ['clothing'],
             mood: 'neutral',
             recurring: false
           },
-          { 
-            amount: 30, 
-            category: 'Transportation', 
-            description: 'Uber ride', 
-            date: new Date(Date.now() - 172800000).toISOString().split('T')[0], 
-            tags: ['commute'], 
+          {
+            amount: 30,
+            category: 'Transportation',
+            description: 'Uber ride',
+            date: new Date(Date.now() - 172800000).toISOString().split('T')[0],
+            tags: ['commute'],
             mood: 'neutral',
             recurring: false
           }
@@ -162,21 +165,21 @@ function App() {
         }
       } else {
         setSubscriptions([
-          { 
-            id: Date.now(), 
-            name: 'Netflix', 
-            amount: 15.99, 
-            frequency: 'monthly', 
-            nextBilling: new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0], 
-            cancelReminder: true 
+          {
+            id: Date.now(),
+            name: 'Netflix',
+            amount: 15.99,
+            frequency: 'monthly',
+            nextBilling: new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0],
+            cancelReminder: true
           },
-          { 
-            id: Date.now() + 1, 
-            name: 'Spotify', 
-            amount: 9.99, 
-            frequency: 'monthly', 
-            nextBilling: new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0], 
-            cancelReminder: false 
+          {
+            id: Date.now() + 1,
+            name: 'Spotify',
+            amount: 9.99,
+            frequency: 'monthly',
+            nextBilling: new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0],
+            cancelReminder: false
           }
         ]);
       }
@@ -205,7 +208,10 @@ function App() {
         console.error('Error saving ', error);
       }
     }
-  }, [expenses, budgets, goals, regretedPurchases, futurePurchases, subscriptions, darkMode, currency, streak, badges, notifications, hourlyWage, user, dbInitialized]);
+  }, [
+    expenses, budgets, goals, regretedPurchases, futurePurchases, subscriptions,
+    darkMode, currency, streak, badges, notifications, hourlyWage, user, dbInitialized
+  ]);
 
   // Add expense, linked to receipt scanner and manual entry
   const addExpense = (expenseData) => {
@@ -379,7 +385,7 @@ function App() {
       <nav className={`${cardBg} border-b ${borderColor} sticky top-[73px] z-40 overflow-x-auto`}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex gap-2 py-2">
-            {[  
+            {[
               { id: 'ultimate', icon: Rocket, label: 'Ultimate' },
               { id: 'dashboard', icon: TrendingUp, label: 'Dashboard' },
               { id: 'expenses', icon: Wallet, label: 'Expenses' },
@@ -391,13 +397,12 @@ function App() {
               { id: 'future', icon: Gift, label: 'Future Plans' },
               { id: 'subscriptions', icon: CreditCard, label: 'Subscriptions' },
               { id: 'settings', icon: SettingsIcon, label: 'Settings' },
-
-              // Newly added revolutionary components
-              { id: 'wealth', icon: Award, label:  },
-              { id: 'social', icon: MessageSquare, label:  },
-                            { id: 'bill', icon: SettingsIcon, label:  },
-                            { id: 'leader', icon: Gift, label: s' },
-              { id: 'alerts', icon: AlertCircle, label:  },
+              // New/experimental features
+              { id: 'wealth', icon: Award, label: '' },
+              { id: 'social', icon: MessageSquare, label: '' },
+              { id: 'bill', icon: SettingsIcon, label: '' },
+              { id: 'leader', icon: Gift, label: '' },
+              { id: 'alerts', icon: AlertCircle, label: 'Alerts' },
               { id: 'receipt', icon: CreditCard, label: 'Receipt Scanner' }
             ].map(item => (
               <button
@@ -562,10 +567,6 @@ function App() {
           />
         )}
 
-        {currentView === 'ai' && (
-          
-        )}
-
         {currentView === 'settings' && (
           <Settings
             darkMode={darkMode}
@@ -586,28 +587,8 @@ function App() {
         )}
 
         {/* Revolutionary Components */}
-        {currentView === 'wealth' && (
-          
-        )}
-
-        {currentView === 'social' && (
-          
-        )}
-
-        {currentView === 'bill' && (
-          
-        )}
-
-        {currentView === 'leader' && (
-          
-        )}
-
-        {currentView === 'alerts' && (
-          
-        )}
-
         {currentView === 'receipt' && (
-          <EnhancedReceiptScanner 
+          <EnhancedReceiptScanner
             onExpenseExtracted={addExpense}
             categories={CATEGORIES}
             darkMode={darkMode}
@@ -616,8 +597,12 @@ function App() {
           />
         )}
 
-            
-          </div>
+        {/* Uncomment and implement if you want these views */}
+        {/* {currentView === 'wealth' && (...)} */}
+        {/* {currentView === 'social' && (...)} */}
+        {/* {currentView === 'bill' && (...)} */}
+        {/* {currentView === 'leader' && (...)} */}
+        {/* {currentView === 'alerts' && (...)} */}
       </main>
 
       {/* Floating Add Button */}
@@ -630,7 +615,7 @@ function App() {
 
       {/* Add Expense Modal */}
       {showAddExpense && (
-        <AddExpenseModal 
+        <AddExpenseModal
           onClose={() => setShowAddExpense(false)}
           onAdd={addExpense}
           categories={CATEGORIES}

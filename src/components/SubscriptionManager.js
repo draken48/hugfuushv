@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CreditCard, Plus, Trash2, AlertCircle, Bell } from 'lucide-react';
+import { CreditCard, Plus, Trash2,  Bell } from 'lucide-react';
 
 const SubscriptionManager = ({ subscriptions, setSubscriptions, currencySymbol, darkMode, cardBg, borderColor }) => {
   const [showAddForm, setShowAddForm] = useState(false);

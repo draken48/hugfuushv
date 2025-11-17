@@ -7,13 +7,13 @@ import { getAnalytics } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBOtORiDf0Lmvr-3gGRcfpmduXJSkvUv1E",
+  apiKey: "AIzaSyBOtORiDf0Lmvr-3gGRcfpmduXJSKvUv1E",
   authDomain: "finote-keep-track.firebaseapp.com",
   projectId: "finote-keep-track",
   storageBucket: "finote-keep-track.firebasestorage.app",
   messagingSenderId: "859853161067",
   appId: "1:859853161067:web:6ba6d8f526e1802035672e",
-  measurementId: "G-0S5R3J75LB"
+  measurementId: "G-05SR3J75LB"
 };
 
 // Initialize Firebase

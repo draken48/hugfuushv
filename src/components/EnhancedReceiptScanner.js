@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { Camera, Upload, Scan, CheckCircle, AlertCircle, X, Loader, Image as ImageIcon, Zap } from 'lucide-react';
+import { Camera, Upload, Scan, CheckCircle, AlertCircle, X, Loader, Zap } from 'lucide-react';
 
 const EnhancedReceiptScanner = ({ onExpenseExtracted, categories, darkMode, cardBg, borderColor }) => {
-  const [scanning, setScanning] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [extractedData, setExtractedData] = useState(null);
   const [error, setError] = useState(null);
@@ -10,7 +9,7 @@ const EnhancedReceiptScanner = ({ onExpenseExtracted, categories, darkMode, card
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
 
-  // Simulate OCR extraction (In production, use Tesseract.js or cloud OCR API)
+  // Simulate OCR extraction (in production, use Tesseract.js or cloud OCR API)
   const performOCR = async (imageFile) => {
     setProcessing(true);
     setError(null);
@@ -26,17 +25,7 @@ const EnhancedReceiptScanner = ({ onExpenseExtracted, categories, darkMode, card
       // Simulate OCR processing delay
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // In production, you would use:
-      // 1. Tesseract.js for client-side OCR:
-      //    const { data: { text } } = await Tesseract.recognize(imageFile, 'eng');
-      // 
-      // 2. Or Google Cloud Vision API:
-      //    const response = await fetch('https://vision.googleapis.com/v1/images:annotate', {...});
-      //
-      // 3. Or AWS Textract:
-      //    const result = await textract.detectDocumentText({...});
-
-      // Simulated OCR result (in production this would be real extracted text)
+      // Simulated OCR result
       const simulatedOCRText = `
         GROCERY STORE
         123 Main Street
@@ -49,11 +38,11 @@ const EnhancedReceiptScanner = ({ onExpenseExtracted, categories, darkMode, card
         Receipt #: ${Math.floor(Math.random() * 10000)}
         
         ITEMS:
-        Organic Milk          $5.99
-        Fresh Bread           $3.49
-        Chicken Breast        $12.99
-        Mixed Vegetables      $6.49
-        Orange Juice          $4.99
+        Organic Milk           $5.99
+        Fresh Bread            $3.49
+        Chicken Breast         $12.99
+        Mixed Vegetables       $6.49
+        Orange Juice           $4.99
         
         SUBTOTAL:            $33.95
         TAX (8%):             $2.72
@@ -77,41 +66,35 @@ const EnhancedReceiptScanner = ({ onExpenseExtracted, categories, darkMode, card
 
   // AI-powered receipt parsing
   const parseReceiptText = (text) => {
-    // Extract merchant name (usually first line or contains "STORE", "MARKET", etc.)
     const lines = text.trim().split('\n').filter(line => line.trim());
     let merchant = lines[0] || 'Unknown Merchant';
-    
     // Look for merchant keywords
     const merchantKeywords = ['STORE', 'MARKET', 'SHOP', 'CAFE', 'RESTAURANT', 'PHARMACY'];
-    const merchantLine = lines.find(line => 
+    const merchantLine = lines.find(line =>
       merchantKeywords.some(keyword => line.toUpperCase().includes(keyword))
     );
     if (merchantLine) merchant = merchantLine.trim();
 
     // Extract date
-    const dateRegex = /(\d{1,2}[-\/]\d{1,2}[-\/]\d{2,4})|(\d{4}[-\/]\d{1,2}[-\/]\d{1,2})/;
+    const dateRegex = /(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})|(\d{4}[-/]\d{1,2}[-/]\d{1,2})/;
     const dateMatch = text.match(dateRegex);
     const date = dateMatch ? new Date(dateMatch[0]).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
 
-    // Extract total amount (look for TOTAL, AMOUNT DUE, etc.)
+    // Extract total amount
     const totalRegex = /(?:TOTAL|AMOUNT|BALANCE)[\s:]*\$?[\s]*([\d,]+\.?\d{0,2})/i;
     const totalMatch = text.match(totalRegex);
     const amount = totalMatch ? parseFloat(totalMatch[1].replace(/,/g, '')) : 0;
 
-    // Extract items
+    // Extract items (avoid unnecessary escapes)
     const itemRegex = /([A-Za-z\s]+)\s+\$?([\d,]+\.?\d{0,2})/g;
     const items = [];
     let match;
     while ((match = itemRegex.exec(text)) !== null) {
       const itemName = match[1].trim();
       const itemPrice = parseFloat(match[2].replace(/,/g, ''));
-      
-      // Filter out likely non-item lines (totals, dates, etc.)
+      // Filter out likely non-item lines
       if (!itemName.match(/TOTAL|SUBTOTAL|TAX|PAYMENT|DATE|TIME|RECEIPT/i) && itemPrice > 0 && itemPrice < 1000) {
-        items.push({
-          name: itemName,
-          price: itemPrice
-        });
+        items.push({ name: itemName, price: itemPrice });
       }
     }
 
@@ -134,15 +117,14 @@ const EnhancedReceiptScanner = ({ onExpenseExtracted, categories, darkMode, card
     };
   };
 
-  // Smart categorization based on merchant and items
+  // Simple categorizer based on merchant and items
   const autoCategorizeMerchant = (merchant, items) => {
     const merchantLower = merchant.toLowerCase();
     const itemNames = items.map(i => i.name.toLowerCase()).join(' ');
 
-    // Food & Dining
     if (
-      merchantLower.includes('restaurant') || 
-      merchantLower.includes('cafe') || 
+      merchantLower.includes('restaurant') ||
+      merchantLower.includes('cafe') ||
       merchantLower.includes('pizza') ||
       merchantLower.includes('food') ||
       merchantLower.includes('market') ||
@@ -152,38 +134,31 @@ const EnhancedReceiptScanner = ({ onExpenseExtracted, categories, darkMode, card
     ) {
       return 'Food & Dining';
     }
-
-    // Transportation
     if (
-      merchantLower.includes('gas') || 
-      merchantLower.includes('fuel') || 
+      merchantLower.includes('gas') ||
+      merchantLower.includes('fuel') ||
       merchantLower.includes('parking') ||
       merchantLower.includes('uber') ||
       merchantLower.includes('lyft')
     ) {
       return 'Transportation';
     }
-
-    // Shopping
     if (
-      merchantLower.includes('store') || 
-      merchantLower.includes('shop') || 
+      merchantLower.includes('store') ||
+      merchantLower.includes('shop') ||
       merchantLower.includes('retail') ||
       merchantLower.includes('mall')
     ) {
       return 'Shopping';
     }
-
-    // Healthcare
     if (
-      merchantLower.includes('pharmacy') || 
-      merchantLower.includes('drug') || 
+      merchantLower.includes('pharmacy') ||
+      merchantLower.includes('drug') ||
       merchantLower.includes('medical') ||
       merchantLower.includes('clinic')
     ) {
       return 'Healthcare';
     }
-
     return 'Others';
   };
 
@@ -242,7 +217,7 @@ const EnhancedReceiptScanner = ({ onExpenseExtracted, categories, darkMode, card
       {!imagePreview && !processing && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Camera Capture */}
-          <div 
+          <div
             onClick={() => cameraInputRef.current?.click()}
             className={`${cardBg} p-8 rounded-xl shadow-lg border-2 border-dashed ${borderColor} cursor-pointer hover:border-purple-500 transition-all hover:scale-105`}
           >
@@ -260,9 +235,8 @@ const EnhancedReceiptScanner = ({ onExpenseExtracted, categories, darkMode, card
               <p className="text-sm opacity-70">Use your camera to snap a receipt</p>
             </div>
           </div>
-
           {/* File Upload */}
-          <div 
+          <div
             onClick={() => fileInputRef.current?.click()}
             className={`${cardBg} p-8 rounded-xl shadow-lg border-2 border-dashed ${borderColor} cursor-pointer hover:border-blue-500 transition-all hover:scale-105`}
           >
@@ -333,44 +307,38 @@ const EnhancedReceiptScanner = ({ onExpenseExtracted, categories, darkMode, card
               <X className="w-5 h-5" />
             </button>
           </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Image Preview */}
             <div>
               <p className="text-sm font-semibold mb-2">Receipt Image:</p>
-              <img 
-                src={imagePreview} 
-                alt="Receipt" 
+              <img
+                src={imagePreview}
+                alt="Receipt"
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-700"
               />
             </div>
-
             {/* Extracted Data */}
             <div className="space-y-4">
               <div>
                 <p className="text-sm font-semibold mb-2">Extracted Information:</p>
-                
                 <div className="space-y-3">
                   <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
                     <p className="text-xs opacity-70">Merchant</p>
                     <p className="font-semibold">{extractedData.merchant}</p>
                   </div>
-
                   <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
                     <p className="text-xs opacity-70">Date</p>
                     <p className="font-semibold">{new Date(extractedData.date).toLocaleDateString()}</p>
                   </div>
-
                   <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
                     <p className="text-xs opacity-70">Total Amount</p>
                     <p className="font-semibold text-2xl text-green-600">${extractedData.amount.toFixed(2)}</p>
                   </div>
-
                   <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
                     <p className="text-xs opacity-70">Category (AI Detected)</p>
                     <select
                       value={extractedData.category}
-                      onChange={(e) => setExtractedData({...extractedData, category: e.target.value})}
+                      onChange={(e) => setExtractedData({ ...extractedData, category: e.target.value })}
                       className={`w-full px-3 py-2 rounded border ${borderColor} ${cardBg} mt-1 font-semibold`}
                     >
                       {categories.map(cat => (
@@ -380,14 +348,12 @@ const EnhancedReceiptScanner = ({ onExpenseExtracted, categories, darkMode, card
                       ))}
                     </select>
                   </div>
-
                   <div className={`p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
                     <p className="text-xs opacity-70">Payment Method</p>
                     <p className="font-semibold">{extractedData.paymentMethod}</p>
                   </div>
                 </div>
               </div>
-
               {/* Items List */}
               {extractedData.items.length > 0 && (
                 <div>
@@ -402,7 +368,6 @@ const EnhancedReceiptScanner = ({ onExpenseExtracted, categories, darkMode, card
                   </div>
                 </div>
               )}
-
               {/* Action Buttons */}
               <div className="flex gap-3 pt-4">
                 <button

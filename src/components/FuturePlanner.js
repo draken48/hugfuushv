@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Gift, Plus, Trash2, CheckCircle, Calendar, TrendingUp } from 'lucide-react';
+import { Gift, Plus, Trash2, CheckCircle,  TrendingUp } from 'lucide-react';
 
 const FuturePlanner = ({ futurePurchases, setFuturePurchases, currencySymbol, darkMode, cardBg, borderColor }) => {
   const [showAddForm, setShowAddForm] = useState(false);
